@@ -187,6 +187,40 @@ test("verify-render.mjs: verifies clean video, exports ear-check MP3, cleans sta
   assert.match(rNoAudio.stdout, /Audio:\s+none/);
 });
 
+test("analyze-cuts.py: handles missing video cleanly and outputs face_audit.json in nested directory", (t) => {
+  const candidates = [path.join(ROOT, ".venv-vision/bin/python"), "python3"];
+  const py = candidates.find((bin) => {
+    if (bin !== "python3" && !existsSync(bin)) return false;
+    return spawnSync(bin, ["-c", "import cv2"], { encoding: "utf8" }).status === 0;
+  });
+
+  if (!py) {
+    t.skip("OpenCV (cv2) not installed locally; runs automatically in CI or after `npm run setup -- --vision`");
+    return;
+  }
+
+  const script = path.join(ROOT, "scripts/analyze-cuts.py");
+  const splicesFile = path.join(TMP, "splices.json");
+  writeFileSync(splicesFile, JSON.stringify([1.0]));
+
+  // Missing video should exit 1 with clear error (no ZeroDivisionError)
+  const rMissing = spawnSync(py, [script, path.join(TMP, "does_not_exist.mp4"), splicesFile], { encoding: "utf8" });
+  assert.equal(rMissing.status, 1);
+  assert.match(rMissing.stderr, /Failed to open video/i);
+  assert.doesNotMatch(rMissing.stderr, /ZeroDivisionError/);
+
+  // Real synthetic video + nested output path
+  const nestedOut = path.join(TMP, "nested/vision/face_audit.json");
+  const rOk = spawnSync(py, [script, mp4Short, splicesFile, nestedOut], { encoding: "utf8" });
+  assert.equal(rOk.status, 0, rOk.stderr);
+  assert.ok(existsSync(nestedOut));
+  const audit = JSON.parse(readFileSync(nestedOut, "utf8"));
+  assert.equal(audit.width, 320);
+  assert.equal(audit.height, 568);
+  assert.equal(audit.splices.length, 1);
+  assert.equal(audit.splices[0].time, 1.0);
+});
+
 test.after(() => {
   rmSync(TMP, { recursive: true, force: true });
 });

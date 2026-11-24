@@ -21,7 +21,12 @@ jobs:
       - name: Install FFmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: Install dependencies
+      - name: Setup OpenCV vision venv
+        run: |
+          python3 -m venv .venv-vision
+          .venv-vision/bin/pip install --quiet opencv-python-headless numpy
+
+      - name: Install Node dependencies
         run: npm ci
 
       - name: Run unit & pipeline tests

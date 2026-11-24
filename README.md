@@ -1,5 +1,7 @@
 # ReelCraft
 
+[![Tests](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml/badge.svg)](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml)
+
 **Open-source, AI-agent-ready pipeline for turning raw footage or voiceovers into polished vertical videos for TikTok, Instagram Reels, and YouTube Shorts — using plain language.**
 
 *[Leer guía en español →](docs/README.es.md)*

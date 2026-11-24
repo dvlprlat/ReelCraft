@@ -1,5 +1,7 @@
 # ReelCraft (Guía en Español)
 
+[![Tests](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml/badge.svg)](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml)
+
 **Pipeline open-source listo para agentes de IA que convierte videos crudos o audios en voz en off en Reels, TikToks y YouTube Shorts profesionales usando lenguaje natural.**
 
 Funciona con **Claude Code, Claude Cowork, Antigravity, Codex y OpenCode**, con un solo motor (**HyperFrames**) que cubre tanto videos **con persona a cámara (*Talking-Head*)** como **sin persona (*Faceless*)**.
