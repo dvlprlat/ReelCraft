@@ -7,25 +7,36 @@
  *   node scripts/clean-audio.mjs <input-audio> --out=<dir> [--max-silence=0.45] [--kept-pause=0.16]
  */
 import { spawnSync } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { existsSync, mkdirSync } from "node:fs";
 import path from "node:path";
+import { cleanMatchingFiles, parseArgs } from "./lib/cli.mjs";
 
-const argv = process.argv.slice(2);
-const input = argv.find((a) => !a.startsWith("--"));
-const opt = (k, def) => {
-  const hit = argv.find((a) => a.startsWith(`--${k}=`));
-  return hit ? hit.slice(k.length + 3) : def;
-};
+const { positional, opt } = parseArgs(process.argv.slice(2));
+const input = positional[0];
 
 if (!input) {
   console.error("Usage: node scripts/clean-audio.mjs <input-audio> --out=<dir> [--max-silence=0.45] [--kept-pause=0.16]");
   process.exit(1);
 }
+if (!existsSync(input)) {
+  console.error(`Input audio not found: ${input}`);
+  process.exit(1);
+}
 
 const outDir = opt("out", path.dirname(input));
-mkdirSync(outDir, { recursive: true });
 const maxSilence = Number(opt("max-silence", "0.45"));
 const keptPause = Number(opt("kept-pause", "0.16"));
+
+if (!Number.isFinite(maxSilence) || maxSilence <= 0) {
+  console.error(`Invalid --max-silence value: "${opt("max-silence", "")}" (must be a positive number).`);
+  process.exit(1);
+}
+if (!Number.isFinite(keptPause) || keptPause < 0) {
+  console.error(`Invalid --kept-pause value: "${opt("kept-pause", "")}" (must be a number >= 0).`);
+  process.exit(1);
+}
+
+mkdirSync(outDir, { recursive: true });
 
 function run(cmd, args) {
   const r = spawnSync(cmd, args, { encoding: "utf8" });
@@ -53,6 +64,13 @@ const silLog = run("ffmpeg", ["-nostdin", "-i", normWav, "-af", `silencedetect=n
 const starts = [...silLog.matchAll(/silence_start: (-?[\d.]+)/g)].map((m) => Math.max(0, Number(m[1])));
 const ends = [...silLog.matchAll(/silence_end: ([\d.]+)/g)].map((m) => Number(m[1]));
 
+// Fail cleanly if the entire file is a single silence from start to end
+const isAllSilent = starts.length === 1 && starts[0] <= 0.05 && (ends.length === 0 || ends[0] >= dur - 0.05);
+if (isAllSilent) {
+  console.error("No speech detected above -42 dB (input audio appears to be completely silent).");
+  process.exit(1);
+}
+
 const margin = keptPause / 2;
 const kept = [];
 let cursor = 0;
@@ -63,6 +81,11 @@ for (let i = 0; i < starts.length; i++) {
   cursor = Math.max(e - margin, 0);
 }
 if (dur - cursor > 0.05) kept.push([cursor, dur]);
+
+if (kept.length === 0) {
+  console.error("No speech detected above -42 dB (no non-silent segments remained after trimming).");
+  process.exit(1);
+}
 
 const parts = [];
 const ins = [];
@@ -76,7 +99,8 @@ run("ffmpeg", ["-nostdin", "-y", "-i", normWav, "-filter_complex", parts.join(";
 
 const cleanDur = parseFloat(run("ffprobe", ["-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", cleanWav]).stdout.trim());
 
-// 3. Export <= 40s MP3 chunks for mandatory direct ear-listening gate
+// 3. Export <= 40s MP3 chunks for mandatory direct ear-listening gate (clear stale chunks first)
+cleanMatchingFiles(outDir, /^ear_check_part\d+\.mp3$/);
 const chunkCount = Math.ceil(cleanDur / 40);
 for (let i = 0; i < chunkCount; i++) {
   const from = i * 40;

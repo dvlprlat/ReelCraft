@@ -4,27 +4,14 @@
  * Local Mode vs Free Cloud Fallback (Groq Whisper API / Google Colab / Codespaces).
  */
 import { spawnSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadEnv } from "./lib/cli.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-
-// Load .env if present
-const envPath = path.join(ROOT, ".env");
-if (existsSync(envPath)) {
-  for (const line of readFileSync(envPath, "utf8").split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const eq = trimmed.indexOf("=");
-    if (eq > 0) {
-      const k = trimmed.slice(0, eq).trim();
-      const v = trimmed.slice(eq + 1).trim().replace(/^["']|["']$/g, "");
-      if (k && !process.env[k]) process.env[k] = v;
-    }
-  }
-}
+loadEnv(ROOT);
 
 function cmdOk(cmd, args = ["--version"]) {
   const r = spawnSync(cmd, args, { encoding: "utf8" });
@@ -48,7 +35,13 @@ const cv2Check = existsSync(venvPy)
 const yunetExists = existsSync(path.join(ROOT, "assets/models/yunet.onnx"));
 const whisperBin = existsSync(path.join(ROOT, "whisper.cpp/main")) || existsSync(path.join(ROOT, "whisper.cpp/build/bin/whisper-cli"));
 const hasGroqKey = Boolean(process.env.GROQ_API_KEY);
-const hasBrowserEnv = Boolean(process.env.HYPERFRAMES_BROWSER_PATH && existsSync(process.env.HYPERFRAMES_BROWSER_PATH));
+const hasBrowserEnv = Boolean(
+  (process.env.HYPERFRAMES_BROWSER_PATH && existsSync(process.env.HYPERFRAMES_BROWSER_PATH)) ||
+  existsSync(path.join(os.homedir(), ".hyperframes/browsers")) ||
+  cmdOk("which", ["google-chrome"]).ok ||
+  cmdOk("which", ["chromium"]).ok ||
+  cmdOk("which", ["chromium-browser"]).ok
+);
 
 const checks = [
   { name: "Node.js >= 22", ok: nodeMajor >= 22, detail: `v${process.versions.node}` },

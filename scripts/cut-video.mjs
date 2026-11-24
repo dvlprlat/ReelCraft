@@ -9,24 +9,49 @@
  *   node scripts/cut-video.mjs <raw-video> --segments=<segments.json> --out=<dir>
  */
 import { spawnSync } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { cleanMatchingFiles, parseArgs } from "./lib/cli.mjs";
 
-const argv = process.argv.slice(2);
-const input = argv.find((a) => !a.startsWith("--"));
-const opt = (k, def) => {
-  const hit = argv.find((a) => a.startsWith(`--${k}=`));
-  return hit ? hit.slice(k.length + 3) : def;
-};
+const { positional, opt } = parseArgs(process.argv.slice(2));
+const input = positional[0];
+const segmentsPath = opt("segments", "");
 
-if (!input || !opt("segments", "")) {
+if (!input || !segmentsPath) {
   console.error("Usage: node scripts/cut-video.mjs <raw-video> --segments=<segments.json> --out=<dir>");
   process.exit(1);
+}
+if (!existsSync(input)) {
+  console.error(`Input video not found: ${input}`);
+  process.exit(1);
+}
+if (!existsSync(segmentsPath)) {
+  console.error(`Segments file not found: ${segmentsPath}`);
+  process.exit(1);
+}
+
+let segments;
+try {
+  segments = JSON.parse(readFileSync(segmentsPath, "utf8"));
+} catch (err) {
+  console.error(`Invalid JSON in ${segmentsPath}: ${err.message}`);
+  process.exit(1);
+}
+
+if (!Array.isArray(segments) || segments.length === 0) {
+  console.error(`Segments file must contain a non-empty JSON array of [startSec, endSec] pairs: ${segmentsPath}`);
+  process.exit(1);
+}
+for (let i = 0; i < segments.length; i++) {
+  const seg = segments[i];
+  if (!Array.isArray(seg) || seg.length !== 2 || !Number.isFinite(seg[0]) || !Number.isFinite(seg[1]) || seg[0] < 0 || seg[1] <= seg[0]) {
+    console.error(`Invalid segment at index ${i}: ${JSON.stringify(seg)} (expected [start, end] with 0 <= start < end).`);
+    process.exit(1);
+  }
 }
 
 const outDir = opt("out", path.dirname(input));
 mkdirSync(outDir, { recursive: true });
-const segments = JSON.parse(readFileSync(opt("segments", ""), "utf8"));
 
 function run(cmd, args) {
   const r = spawnSync(cmd, args, { encoding: "utf8" });
@@ -66,7 +91,8 @@ run("ffmpeg", [
 const dur = parseFloat(run("ffprobe", ["-v", "quiet", "-show_entries", "format=duration", "-of", "csv=p=0", cleanMp4]).stdout.trim());
 writeFileSync(path.join(outDir, "splices.json"), JSON.stringify(splices, null, 2));
 
-// Export <= 40s MP3 chunks for mandatory direct ear-listening gate
+// Export <= 40s MP3 chunks for mandatory direct ear-listening gate (clear stale chunks first)
+cleanMatchingFiles(outDir, /^ear_check_part\d+\.mp3$/);
 const chunkCount = Math.ceil(dur / 40);
 for (let i = 0; i < chunkCount; i++) {
   run("ffmpeg", ["-nostdin", "-y", "-ss", String(i * 40), "-t", "40", "-i", cleanMp4, "-vn", "-c:a", "libmp3lame", "-b:a", "128k", path.join(outDir, `ear_check_part${i + 1}.mp3`)]);

@@ -30,10 +30,18 @@ if not os.path.isfile(model_path):
     sys.exit(1)
 
 cap = cv2.VideoCapture(video_path)
+if not cap.isOpened():
+    print(f"Failed to open video: {video_path}", file=sys.stderr)
+    sys.exit(1)
+
 fps = cap.get(cv2.CAP_PROP_FPS) or 30.0
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+if width <= 0 or height <= 0:
+    cap.release()
+    print(f"Invalid video dimensions ({width}x{height}) for: {video_path}", file=sys.stderr)
+    sys.exit(1)
 duration = total_frames / fps
 
 det_w = 360
@@ -105,6 +113,9 @@ result = {
 }
 
 if out_path:
+    parent = os.path.dirname(os.path.abspath(out_path))
+    if parent:
+        os.makedirs(parent, exist_ok=True)
     with open(out_path, "w") as fp:
         json.dump(result, fp, indent=2)
 print(json.dumps({k: v for k, v in result.items() if k != "faceTrack"}, indent=2))
