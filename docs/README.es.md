@@ -1,6 +1,11 @@
+<p align="left">
+  <img src="../assets/logo.svg" alt="ReelCraft Logo" width="56" height="56">
+</p>
+
 # ReelCraft (Guía en Español)
 
 [![Tests](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml/badge.svg)](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml)
+[![Web](https://img.shields.io/badge/web-reelcraft.dev%2Fes-ff4d2e)](https://reelcraft.dev/es/)
 
 **Pipeline open-source listo para agentes de IA que convierte videos crudos o audios en voz en off en Reels, TikToks y YouTube Shorts profesionales usando lenguaje natural.**
 

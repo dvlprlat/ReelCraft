@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="ReelCraft Logo">
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#0b0c0e" stroke="#262a33" stroke-width="2.5"/>
+  <rect x="19" y="10" width="26" height="44" rx="5.5" fill="#151820" stroke="#f3f2ee" stroke-width="2.5"/>
+  <path d="M27.5 24.5 L39 32 L27.5 39.5 Z" fill="#f3f2ee"/>
+  <circle cx="45" cy="14" r="5" fill="#ff4d2e" stroke="#0b0c0e" stroke-width="2"/>
+</svg>

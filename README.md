@@ -1,10 +1,15 @@
+<p align="left">
+  <img src="assets/logo.svg" alt="ReelCraft Logo" width="56" height="56">
+</p>
+
 # ReelCraft
 
 [![Tests](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml/badge.svg)](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml)
+[![Website](https://img.shields.io/badge/web-reelcraft.dev-ff4d2e)](https://reelcraft.dev)
 
 **Open-source, AI-agent-ready pipeline for turning raw footage or voiceovers into polished vertical videos for TikTok, Instagram Reels, and YouTube Shorts — using plain language.**
 
-*[Leer guía en español →](docs/README.es.md)*
+*[Visit reelcraft.dev →](https://reelcraft.dev) · [Leer guía en español →](docs/README.es.md)*
 
 ReelCraft combines **HyperFrames** (HTML/CSS/GSAP video rendering), **FFmpeg**, **Whisper / Groq** (word-level transcription), and **OpenCV YuNet** (eye-line tracking & jump-cut masking) behind a universal agent workflow (**Claude Code, Claude Cowork, Antigravity, Codex, OpenCode**).
 
