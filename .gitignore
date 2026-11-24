@@ -1,0 +1,16 @@
+node_modules/
+.venv-vision/
+whisper.cpp/
+.env
+work/*
+!work/.gitkeep
+out/*
+!out/.gitkeep
+input/*
+!input/.gitkeep
+*.DS_Store
+*:Zone.Identifier
+.hyperframes/
+__pycache__/
+*.pyc
+

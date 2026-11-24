@@ -1,0 +1,22 @@
+{
+  "name": "reelcraft",
+  "version": "1.0.0",
+  "description": "AI-agent-ready open-source pipeline for producing vertical short-form videos (talking-head & faceless) for TikTok, Instagram Reels, and YouTube Shorts using HyperFrames, FFmpeg, Whisper/Groq, and OpenCV YuNet.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "doctor": "node scripts/doctor.mjs",
+    "setup": "node scripts/setup.mjs",
+    "fetch-reference": "node scripts/fetch-reference.mjs",
+    "transcribe": "node scripts/transcribe.mjs",
+    "clean-audio": "node scripts/clean-audio.mjs",
+    "cut-video": "node scripts/cut-video.mjs",
+    "verify-render": "node scripts/verify-render.mjs"
+  },
+  "dependencies": {
+    "hyperframes": "^0.9.53"
+  }
+}
