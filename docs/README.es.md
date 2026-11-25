@@ -6,6 +6,14 @@
 
 [![Tests](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml/badge.svg)](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml)
 [![Web](https://img.shields.io/badge/web-reelcraft.dev%2Fes-ff4d2e)](https://reelcraft.dev/es/)
+[![Licencia: MIT](https://img.shields.io/github/license/dvlprlat/ReelCraft)](../LICENSE)
+[![Node.js >= 22](https://img.shields.io/badge/node-%3E%3D22-339933?logo=node.js&logoColor=white)](../package.json)
+[![GitHub Stars](https://img.shields.io/github/stars/dvlprlat/ReelCraft?style=flat)](https://github.com/dvlprlat/ReelCraft/stargazers)
+
+[![Abrir en Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dvlprlat/ReelCraft/blob/main/cloud/reelcraft_colab.ipynb)
+[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dvlprlat/ReelCraft)
+[![Patrocinar en GitHub](https://img.shields.io/github/sponsors/dvlprlat?label=Sponsor&logo=githubsponsors&color=ea4aaa)](https://github.com/sponsors/dvlprlat)
+[![Apoyar en Ko-fi](https://img.shields.io/badge/Ko--fi-Apoyar-ff5e5b?logo=ko-fi&logoColor=white)](https://ko-fi.com/dvlprlat)
 
 **Pipeline open-source listo para agentes de IA que convierte videos crudos o audios en voz en off en Reels, TikToks y YouTube Shorts profesionales usando lenguaje natural.**
 

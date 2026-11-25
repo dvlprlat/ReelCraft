@@ -6,6 +6,14 @@
 
 [![Tests](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml/badge.svg)](https://github.com/dvlprlat/ReelCraft/actions/workflows/test.yml)
 [![Website](https://img.shields.io/badge/web-reelcraft.dev-ff4d2e)](https://reelcraft.dev)
+[![License: MIT](https://img.shields.io/github/license/dvlprlat/ReelCraft)](LICENSE)
+[![Node.js >= 22](https://img.shields.io/badge/node-%3E%3D22-339933?logo=node.js&logoColor=white)](package.json)
+[![GitHub Stars](https://img.shields.io/github/stars/dvlprlat/ReelCraft?style=flat)](https://github.com/dvlprlat/ReelCraft/stargazers)
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/dvlprlat/ReelCraft/blob/main/cloud/reelcraft_colab.ipynb)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/dvlprlat/ReelCraft)
+[![Sponsor on GitHub](https://img.shields.io/github/sponsors/dvlprlat?label=Sponsor&logo=githubsponsors&color=ea4aaa)](https://github.com/sponsors/dvlprlat)
+[![Support on Ko-fi](https://img.shields.io/badge/Ko--fi-Support-ff5e5b?logo=ko-fi&logoColor=white)](https://ko-fi.com/dvlprlat)
 
 **Open-source, AI-agent-ready pipeline for turning raw footage or voiceovers into polished vertical videos for TikTok, Instagram Reels, and YouTube Shorts — using plain language.**
 
